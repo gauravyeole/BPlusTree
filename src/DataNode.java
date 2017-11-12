@@ -32,6 +32,10 @@ public class DataNode extends TreeNode{
 		return this.prev;
 	}
 
+	public ArrayList<ArrayList<String>> getValues(){
+		return values;
+	}
+
 	@Override
 	public void insertKey(double key, String val){
 		int index = Collections.binarySearch(keys,key);

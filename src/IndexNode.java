@@ -11,6 +11,8 @@ public class IndexNode extends TreeNode{
 		noKeys = 0;
 	}
 
-
+	public ArrayList<TreeNode> getChildren(){
+		return children;
+	}
 
 }

@@ -18,4 +18,8 @@ public class TreeNode{
 	public void insertKey(double key, String val){
 		
 	}
+
+	public ArrayList<Double> getKeys(){
+		return keys;
+	}
 }
