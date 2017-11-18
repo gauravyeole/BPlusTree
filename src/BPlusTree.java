@@ -30,35 +30,59 @@ public class BPlusTree{
 			TreeNode targetNode = path.pop();
 			targetNode.insertKey(key,val);
 
+			System.out.println("------TartgetNode Keys----------");
+			System.out.println(targetNode.keys);
+			System.out.println(targetNode.isLeafNode);
+
 			// Case - If Adding new key at leaf causes overflow
 			
 			if(targetNode.keys.size() == BPlusTree.order){
-	
-				TreeNode[] splittedNodes = targetNode.split();
+				TreeNode[] splittedNodes = null;
+				splittedNodes = targetNode.split();
 				double splitKey = splittedNodes[1].keys.get(0);
-				
-				while(!path.empty() && path.peek().keys.size()+1 == order){
+				System.out.print("before while splittedNodes[0].keys =  ");
+				System.out.print(splittedNodes[0].keys);
+				System.out.println(splittedNodes[1].keys);
+
+				while(!path.empty()  && targetNode.keys.size() == BPlusTree.order){
 					System.out.println("---------inside while----------");
-					TreeNode parentNode = path.pop();
-					if(!parentNode.isLeafNode)
-						parentNode.insertKey(splitKey,splittedNodes[0],splittedNodes[1]);
-					else	
-						parentNode.insertKey(splitKey,val);
-					splittedNodes = parentNode.split();
-					if(parentNode.isLeafNode)		splitKey = splittedNodes[1].keys.get(0);
-					else 		splitKey = parentNode.keys.get(parentNode.keys.size() / 2);
+					TreeNode parentNode = path.peek();
+					
+					parentNode.insertKey(splitKey,splittedNodes[0],splittedNodes[1]);
+					targetNode = parentNode;
+
+					if(parentNode.keys.size() == BPlusTree.order){
+						System.out.println("++++++++++++++inside while ------- if ----parentNode Keys are*********");
+						System.out.println(parentNode.keys);
+						splittedNodes = targetNode.split();
+						splitKey = splittedNodes[1].keys.get(0);
+						System.out.print("insede if of while splittedNodes[0].keys =  ");
+						System.out.print(splittedNodes[0].keys);
+						System.out.println(splittedNodes[1].keys);
+
+						path.pop();
+					}
+					
 				}
 				
 				if(path.empty()){
 					IndexNode newRoot = new IndexNode();
+					
+					System.out.print("****ROOT CASE*****");
+					System.out.print(splittedNodes[0].keys);
+					System.out.println(splittedNodes[1].keys);
+					System.out.print("splitKey ");
+					System.out.println(splitKey);
 					newRoot.insertKey(splitKey,splittedNodes[0],splittedNodes[1]);
 					this.root = newRoot;
 				}
 
-				else{
-					IndexNode node = (IndexNode) path.peek();
-					node.insertKey(splitKey,splittedNodes[0],splittedNodes[1]);
-				}
+				// else{
+
+				// 	IndexNode currentNode = (IndexNode) path.peek();
+				// 	currentNode.insertKey(splitKey,splittedNodes[0],splittedNodes[1]);
+
+				// }
 
 			}
 		}

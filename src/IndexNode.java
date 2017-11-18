@@ -19,9 +19,11 @@ public class IndexNode extends TreeNode{
 	public void insertKey(double key, TreeNode leftNode, TreeNode rightNode){
 		int index = Collections.binarySearch(keys,key);
 		index = -index - 1;
-		System.out.println("--------index inside insertKey of dataNode----------");
+		System.out.println("--------index inside insertKey of indexNode----------");
+		System.out.print(key);
+		System.out.print(keys);
 		System.out.println(index);
-		keys.add(index,key);
+		this.keys.add(index,key);
 		if(children.size() > 0)	children.remove(index);
 
 		children.add(index,rightNode);
@@ -29,21 +31,23 @@ public class IndexNode extends TreeNode{
 
 		System.out.println("-----------Print children---------");
 		for(TreeNode child : this.children){
-			System.out.println(child.keys);
+			System.out.print(child.keys);
 		}
+		System.out.println("");
 	}
 
 	@Override
-	public IndexNode[] split(){
+	public TreeNode[] split(){
 		IndexNode[] output = new IndexNode[2];
 		output[0] = new IndexNode();
 		output[1] = new IndexNode();
+		int length = this.keys.size();
 
-		output[0].keys = new ArrayList<>(this.keys.subList(0,this.noKeys/2));
-		output[0].children = new ArrayList<TreeNode>(this.children.subList(0,this.noKeys/2));
+		output[0].keys = new ArrayList<>(this.keys.subList(0,length/2));
+		output[0].children = new ArrayList<TreeNode>(this.children.subList(0,length/2));
 
-		output[1].keys = new ArrayList<>(this.keys.subList(this.noKeys/2 + 1, this.noKeys));
-		output[1].children = new ArrayList<TreeNode>(this.children.subList(this.noKeys/2 + 1, this.noKeys));
+		output[1].keys = new ArrayList<>(this.keys.subList(length/2 + 1, length));
+		output[1].children = new ArrayList<TreeNode>(this.children.subList(length/2 + 1, length));
 
 		return output;
 	}
