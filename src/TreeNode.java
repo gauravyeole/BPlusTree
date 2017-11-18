@@ -15,8 +15,16 @@ public class TreeNode{
 		return noKeys;
 	}
 
+	public void insertKey(double key, TreeNode leftNode, TreeNode rightNode){
+		
+	}
+
 	public void insertKey(double key, String val){
 		
+	}
+
+	public TreeNode[] split(){
+		return new TreeNode[2];
 	}
 
 	public ArrayList<Double> getKeys(){

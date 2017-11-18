@@ -55,6 +55,8 @@ public class DataNode extends TreeNode{
 		}
 	}
 
+	
+	@Override
 	public DataNode[] split(){
 		DataNode[] output = new DataNode[2];
 

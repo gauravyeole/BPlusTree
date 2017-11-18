@@ -23,7 +23,31 @@ public class BPlusTree{
 
 		// Case 2 - root is not null. 
 		else{
+			
+			Stack<TreeNode> path = getPath(key);
 
+			// Case 2 - new node is leafnode 
+			TreeNode targetNode = path.pop();
+			targetNode.insertKey(key,val);
+
+			// Case - If Adding new key at leaf causes overflow
+			if(targetNode.getNoKeys() == order){
+				TreeNode[] splittedNodes = targetNode.split();
+				double splitKey = splittedNodes[1].keys.get(0);
+				
+				while(!path.empty() && targetNode.getNoKeys() == order){
+					TreeNode parentNode = path.pop();
+					parentNode.insertKey(splitKey,splittedNodes[0],splittedNodes[1]);
+					targetNode = parentNode;
+				}
+				
+				if(path.empty()){
+					IndexNode newRoot = new IndexNode();
+					newRoot.insertKey(splitKey,splittedNodes[0],splittedNodes[1]);
+					this.root = newRoot;
+				}
+
+			}
 		}
 		return;
 	}
