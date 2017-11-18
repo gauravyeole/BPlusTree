@@ -19,11 +19,18 @@ public class IndexNode extends TreeNode{
 	public void insertKey(double key, TreeNode leftNode, TreeNode rightNode){
 		int index = Collections.binarySearch(keys,key);
 		index = -index - 1;
+		System.out.println("--------index inside insertKey of dataNode----------");
+		System.out.println(index);
+		keys.add(index,key);
+		if(children.size() > 0)	children.remove(index);
 
-		if(children.size() != 0)	children.remove(index);
-
+		children.add(index,rightNode);
 		children.add(index,leftNode);
-		children.add(index+1,rightNode);
+
+		System.out.println("-----------Print children---------");
+		for(TreeNode child : this.children){
+			System.out.println(child.keys);
+		}
 	}
 
 	@Override

@@ -55,7 +55,7 @@ public class DataNode extends TreeNode{
 		}
 	}
 
-	
+
 	@Override
 	public DataNode[] split(){
 		DataNode[] output = new DataNode[2];
@@ -67,11 +67,15 @@ public class DataNode extends TreeNode{
 		output[0].values = new ArrayList<>(this.values.subList(0,this.noKeys/2));
 		output[0].noKeys = output[0].keys.size();
 		output[0].next = output[1];
+		output[0].prev = this.prev;
+		if(this.prev != null)	((DataNode)this.prev).next = output[0];
 
-		output[1].keys = new ArrayList<>(this.keys.subList(this.noKeys/2 + 1, this.noKeys));
-		output[1].values = new ArrayList<>(this.values.subList(this.noKeys/2 + 1, this.noKeys));
+		output[1].keys = new ArrayList<>(this.keys.subList(this.noKeys/2 , this.noKeys));
+		output[1].values = new ArrayList<>(this.values.subList(this.noKeys/2 , this.noKeys));
 		output[1].noKeys = output[1].keys.size();
 		output[1].prev = output[0];
+		output[1].next = this.next;
+		if(this.next != null)	((DataNode)this.next).prev = output[1];
 
 		return output;
 	}
