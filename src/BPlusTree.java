@@ -222,10 +222,7 @@ public class BPlusTree{
 		TreeNode node = getPath(key1).peek();
 		int index = Collections.binarySearch(node.getKeys(),key1);
 		index =  (index < 0) ?	-index -1 : index;
-		System.out.print("++++++++++++++++ Index of first key in the list of keys is : ");
-		System.out.println(index);
-		System.out.print("+++++++++++++++Keys of datanode are: ");
-		System.out.println(node.keys);
+		
 
 		if(index == node.getNoKeys()){
 			node = ((DataNode)node).getNext();
