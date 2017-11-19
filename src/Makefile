@@ -11,4 +11,4 @@ BPlusTree:	BPlusTree.java
 treesearch:	treesearch.java
 		javac treesearch.java
 clean:	
-		rm -rf *.class
+		rm -rf *.class output_file.txt
