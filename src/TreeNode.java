@@ -15,6 +15,10 @@ public class TreeNode{
 		return noKeys;
 	}
 
+	public ArrayList<Double> getKeys(){
+		return keys;
+	}
+
 	public void insertKey(double key, TreeNode leftNode, TreeNode rightNode){
 		
 	}
@@ -27,7 +31,5 @@ public class TreeNode{
 		return new TreeNode[2];
 	}
 
-	public ArrayList<Double> getKeys(){
-		return keys;
-	}
+	
 }

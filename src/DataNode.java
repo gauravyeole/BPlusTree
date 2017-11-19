@@ -41,7 +41,7 @@ public class DataNode extends TreeNode{
 		int index = Collections.binarySearch(keys,key);
 		
 
-		if(index > 0){
+		if(index >= 0){
 			values.get(index).add(val);
 		}
 		else{
@@ -58,20 +58,28 @@ public class DataNode extends TreeNode{
 
 	@Override
 	public TreeNode[] split(){
+		// System.out.println("-------------Split DataNode Keys are ------------");
+		// System.out.println(this.keys);
+
 		DataNode[] output = new DataNode[2];
 
 		output[0] = new DataNode();
 		output[1] = new DataNode();
 
-		output[0].keys = new ArrayList<>(this.keys.subList(0,this.noKeys/2));
-		output[0].values = new ArrayList<>(this.values.subList(0,this.noKeys/2));
+		output[0].keys = new ArrayList<>(this.keys.subList(0,this.keys.size()/2));
+		output[0].values = new ArrayList<>(this.values.subList(0,this.keys.size()/2));
 		output[0].noKeys = output[0].keys.size();
 		output[0].next = output[1];
 		output[0].prev = this.prev;
 		if(this.prev != null)	((DataNode)this.prev).next = output[0];
 
-		output[1].keys = new ArrayList<>(this.keys.subList(this.noKeys/2 , this.noKeys));
-		output[1].values = new ArrayList<>(this.values.subList(this.noKeys/2 , this.noKeys));
+		output[1].keys = new ArrayList<>(this.keys.subList(this.keys.size()/2, this.keys.size()));
+		output[1].values = new ArrayList<>(this.values.subList(this.keys.size()/2, this.keys.size()));
+
+		// System.out.println("-------------Output 0 DataNode Keys are ------------");
+		// System.out.println(output[0].keys);
+		// System.out.println("-------------Output 1 DataNode Keys are ------------");
+		// System.out.println(output[1].keys);
 		output[1].noKeys = output[1].keys.size();
 		output[1].prev = output[0];
 		output[1].next = this.next;

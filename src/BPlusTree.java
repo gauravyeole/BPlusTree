@@ -13,79 +13,141 @@ public class BPlusTree{
 	}
 
 
-	public void insert(double key, String val){
+	public void insert(double key, String value){
 		// Case 1 - if tree is empty, then root will be DataNode. 
 
 		if(root == null){
 			root = new DataNode();
-			root.insertKey(key,val);
+			root.insertKey(key,value);
 		}
 
 		// Case 2 - root is not null. 
 		else{
 			
+			// Stack<TreeNode> path = getPath(key);
+
+			// // Case 2 - new node is leafnode 
+			// TreeNode targetNode = path.pop();
+			// targetNode.insertKey(key,val);
+
+			// System.out.println("------TartgetNode Keys----------");
+			// System.out.println(targetNode.keys);
+			// System.out.println(targetNode.isLeafNode);
+
+			// // Case - If Adding new key at leaf causes overflow
+			
+			// if(targetNode.keys.size() == BPlusTree.order){
+			// 	TreeNode[] splittedNodes = null;
+			// 	splittedNodes = targetNode.split();
+			// 	double splitKey = splittedNodes[1].keys.get(0);
+			// 	System.out.print("before while splittedNodes[0].keys =  ");
+			// 	System.out.print(splittedNodes[0].keys);
+			// 	System.out.println(splittedNodes[1].keys);
+
+			// 	while(!path.empty()  && targetNode.keys.size() == BPlusTree.order){
+			// 		System.out.println("---------inside while----------");
+			// 		TreeNode parentNode = path.peek();
+					
+			// 		parentNode.insertKey(splitKey,splittedNodes[0],splittedNodes[1]);
+			// 		targetNode = parentNode;
+
+			// 		if(parentNode.keys.size() == BPlusTree.order){
+			// 			System.out.println("++++++++++++++inside while ------- if ----parentNode Keys are*********");
+			// 			System.out.println(parentNode.keys);
+			// 			splittedNodes = targetNode.split();
+			// 			splitKey = splittedNodes[1].keys.get(0);
+			// 			System.out.print("insede if of while splittedNodes[0].keys =  ");
+			// 			System.out.print(splittedNodes[0].keys);
+			// 			System.out.println(splittedNodes[1].keys);
+
+
+			// 		}
+					
+			// 	}
+				
+			// 	if(path.empty()){
+			// 		IndexNode newRoot = new IndexNode();
+					
+			// 		System.out.print("****ROOT CASE*****");
+			// 		System.out.print(splittedNodes[0].keys);
+			// 		System.out.println(splittedNodes[1].keys);
+			// 		System.out.print("splitKey ");
+			// 		System.out.println(splitKey);
+			// 		newRoot.insertKey(splitKey,splittedNodes[0],splittedNodes[1]);
+			// 		this.root = newRoot;
+			// 	}
+
+			// 	// else{
+
+			// 	// 	IndexNode currentNode = (IndexNode) path.peek();
+			// 	// 	currentNode.insertKey(splitKey,splittedNodes[0],splittedNodes[1]);
+
+			// 	// }
+
+
 			Stack<TreeNode> path = getPath(key);
 
-			// Case 2 - new node is leafnode 
-			TreeNode targetNode = path.pop();
-			targetNode.insertKey(key,val);
-
-			System.out.println("------TartgetNode Keys----------");
-			System.out.println(targetNode.keys);
-			System.out.println(targetNode.isLeafNode);
-
-			// Case - If Adding new key at leaf causes overflow
 			
-			if(targetNode.keys.size() == BPlusTree.order){
-				TreeNode[] splittedNodes = null;
-				splittedNodes = targetNode.split();
-				double splitKey = splittedNodes[1].keys.get(0);
-				System.out.print("before while splittedNodes[0].keys =  ");
-				System.out.print(splittedNodes[0].keys);
-				System.out.println(splittedNodes[1].keys);
+			if (path.peek().keys.size() + 1 == BPlusTree.order) {
 
-				while(!path.empty()  && targetNode.keys.size() == BPlusTree.order){
-					System.out.println("---------inside while----------");
-					TreeNode parentNode = path.peek();
+				int index = Collections.binarySearch(path.peek().keys, key);
+
+				if (index >= 0) {
+					path.peek().insertKey(key, value);
+				}
+
+				
+				else {
+
+					TreeNode[] splittedNodes = null;
+
 					
-					parentNode.insertKey(splitKey,splittedNodes[0],splittedNodes[1]);
-					targetNode = parentNode;
 
-					if(parentNode.keys.size() == BPlusTree.order){
-						System.out.println("++++++++++++++inside while ------- if ----parentNode Keys are*********");
-						System.out.println(parentNode.keys);
-						splittedNodes = targetNode.split();
-						splitKey = splittedNodes[1].keys.get(0);
-						System.out.print("insede if of while splittedNodes[0].keys =  ");
-						System.out.print(splittedNodes[0].keys);
-						System.out.println(splittedNodes[1].keys);
+					double splitKey = 0;
 
-						path.pop();
+					
+					while (!path.empty() && path.peek().keys.size() + 1 == BPlusTree.order) {
+
+						TreeNode parent = path.pop();
+						if (parent.isLeafNode) {
+							parent.insertKey(key, value);
+						} 
+						else {
+							parent.insertKey(splitKey, splittedNodes[0], splittedNodes[1]);
+						}
+
+						splittedNodes = parent.split();
+						splitKey = parent.isLeafNode ? splittedNodes[1].keys.get(0)
+								: parent.keys.get(parent.keys.size() / 2);
+
+					}
+
+					
+					if (path.empty()) {
+
+						IndexNode newRoot = new IndexNode();
+						newRoot.insertKey(splitKey, splittedNodes[0], splittedNodes[1]);
+						this.root = newRoot;
+
 					}
 					
-				}
-				
-				if(path.empty()){
-					IndexNode newRoot = new IndexNode();
+					else {
+						IndexNode node = (IndexNode) path.peek();
+						node.insertKey(splitKey, splittedNodes[0], splittedNodes[1]);
+					}
 					
-					System.out.print("****ROOT CASE*****");
-					System.out.print(splittedNodes[0].keys);
-					System.out.println(splittedNodes[1].keys);
-					System.out.print("splitKey ");
-					System.out.println(splitKey);
-					newRoot.insertKey(splitKey,splittedNodes[0],splittedNodes[1]);
-					this.root = newRoot;
+
 				}
-
-				// else{
-
-				// 	IndexNode currentNode = (IndexNode) path.peek();
-				// 	currentNode.insertKey(splitKey,splittedNodes[0],splittedNodes[1]);
-
-				// }
 
 			}
-		}
+
+			
+			else {
+				path.peek().insertKey(key, value);
+			}
+
+			}
+		
 		return;
 	}
 
@@ -93,22 +155,38 @@ public class BPlusTree{
 		// returns Stack of all the nodes along the path to the key
 		// First node of the stack is DataNode
 		Stack<TreeNode> path = new Stack<TreeNode>();
+		// System.out.print("Calling path traverse");
 		pathTraverse(root,key,path);
 		return path;
 	}
 
 	private void pathTraverse(TreeNode root, double key, Stack<TreeNode> path){
 		if(root.isLeafNode == true){
+			// System.out.print("Inside path traverse leaf");
 			path.push(root);
 			return;
 		}
 
 		else{
+
 			path.push(root);
-			int index = Collections.binarySearch(root.getKeys(),key);
-			if(index < 0)	index = -index-1;
-			else	index = index+1;
-			TreeNode next = ((IndexNode)root).getChildren().get(index);
+			int index = Collections.binarySearch(root.keys,key);
+			if(index < 0){
+				index = -(index+1);
+			}
+			else{
+				index = index+1;
+			}
+			// System.out.print("Inside path traverse root");
+			// System.out.print(root.keys);
+			// for(TreeNode child : ((IndexNode)root).children){
+			// System.out.print(child.keys);
+			// }
+			// System.out.println("");
+			//System.out.print("Inside path traverse root");
+
+
+			TreeNode next = ((IndexNode)root).children.get(index);
 			pathTraverse(next,key,path);
 		}
 	}
@@ -119,7 +197,7 @@ public class BPlusTree{
 			System.out.print("Null");
 		}
 
-		TreeNode node = getPath(key).pop();
+		TreeNode node = getPath(key).peek();
 		int index = Collections.binarySearch(node.getKeys(),key);
 
 		if(index < 0){
@@ -141,16 +219,25 @@ public class BPlusTree{
 			System.out.println("Null");
 		}
 
-		TreeNode node = getPath(key1).pop();
+		TreeNode node = getPath(key1).peek();
 		int index = Collections.binarySearch(node.getKeys(),key1);
-		if (index < 0)	index = -index -1 ;
+		index =  (index < 0) ?	-index -1 : index;
+		System.out.print("++++++++++++++++ Index of first key in the list of keys is : ");
+		System.out.println(index);
+		System.out.print("+++++++++++++++Keys of datanode are: ");
+		System.out.println(node.keys);
+
+		if(index == node.getNoKeys()){
+			node = ((DataNode)node).getNext();
+			index = 0;
+		}
 
 		StringBuilder sb = new StringBuilder();
 		double temp = key1;
 
 		while(node != null && temp <= key2){
 
-			ArrayList<Double>	keys = node.getKeys();
+			ArrayList<Double>	keys = node.keys;
 			temp = keys.get(index);
 			while(temp <= key2){
 
@@ -175,26 +262,5 @@ public class BPlusTree{
 
 	}
 
-	public void printTree(TreeNode root) {
-
-		if (root == null)
-			return;
-
-		if (root.isLeafNode) {
-			for (int i = 0; i < root.keys.size(); i++) {
-				System.out.print(root.keys.get(i));
-				System.out.print("---");
-				System.out.print(((DataNode) root).values.get(i) + " ; ");
-			}
-			System.out.print(" \n");
-			return;
-
-		}
-
-		System.out.println("\nInternal node:" + root.keys);
-		for (TreeNode node : ((IndexNode) root).getChildren()) {
-			printTree(node);
-		}
-
-	}
+	
 }
