@@ -39,10 +39,9 @@ public class BPlusTree{
 			Stack<TreeNode> path = getPath(key);
 
 			// Case 2.i - if adding new key in the possible node causes the overflow 
-			//(Number of keys is equal to order-1 i.e. capacityI of number keys is already reached.)
+			//(Number of keys is equal to order-1 i.e. capacityISpk of number keys is already reached.)
 
 			if (path.peek().keys.size() + 1 == BPlusTree.order) {
-I
 				int index = Collections.binarySearch(path.peek().keys, key); // get the index of th new key in the possible node.
 
 				// if key is already present: no need to split, just add the value in corresponding index at the datanode, by calling inserKey of datanode.
