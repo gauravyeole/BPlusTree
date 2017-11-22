@@ -1,117 +1,72 @@
+// Gaurav Anil YeoleS
+// University of Florida
+// COP 5536 : Advanced Data Structures
+// gauravyeole@ufl.edu
+// UFID 54473949
+
 import java.util.Collections;
 import java.util.ArrayList;
 import java.util.Stack;
 
 public class BPlusTree{
 
+
 	public TreeNode root;
 	public static int order;
 
+	// Constructor of B-Plus Tree, order of tree is aregument. 
+	// sets root of tree as null.
 	public BPlusTree(int n){
 		BPlusTree.order = n;
 		root = null;
 	}
 
-
+	//method to insert the key in the tree.
 	public void insert(double key, String value){
-		// Case 1 - if tree is empty, then root will be DataNode. 
-
+	
+		// Case 1 - 
+		// If root is null, New DataNode is created and key-value pair is sentas a argument in the insertKey method of DataNode.
 		if(root == null){
 			root = new DataNode();
 			root.insertKey(key,value);
 		}
 
-		// Case 2 - root is not null. 
+		// Case 2 - 
+		// if root of tree is not null:
 		else{
-			
-			// Stack<TreeNode> path = getPath(key);
-
-			// // Case 2 - new node is leafnode 
-			// TreeNode targetNode = path.pop();
-			// targetNode.insertKey(key,val);
-
-			// System.out.println("------TartgetNode Keys----------");
-			// System.out.println(targetNode.keys);
-			// System.out.println(targetNode.isLeafNode);
-
-			// // Case - If Adding new key at leaf causes overflow
-			
-			// if(targetNode.keys.size() == BPlusTree.order){
-			// 	TreeNode[] splittedNodes = null;
-			// 	splittedNodes = targetNode.split();
-			// 	double splitKey = splittedNodes[1].keys.get(0);
-			// 	System.out.print("before while splittedNodes[0].keys =  ");
-			// 	System.out.print(splittedNodes[0].keys);
-			// 	System.out.println(splittedNodes[1].keys);
-
-			// 	while(!path.empty()  && targetNode.keys.size() == BPlusTree.order){
-			// 		System.out.println("---------inside while----------");
-			// 		TreeNode parentNode = path.peek();
-					
-			// 		parentNode.insertKey(splitKey,splittedNodes[0],splittedNodes[1]);
-			// 		targetNode = parentNode;
-
-			// 		if(parentNode.keys.size() == BPlusTree.order){
-			// 			System.out.println("++++++++++++++inside while ------- if ----parentNode Keys are*********");
-			// 			System.out.println(parentNode.keys);
-			// 			splittedNodes = targetNode.split();
-			// 			splitKey = splittedNodes[1].keys.get(0);
-			// 			System.out.print("insede if of while splittedNodes[0].keys =  ");
-			// 			System.out.print(splittedNodes[0].keys);
-			// 			System.out.println(splittedNodes[1].keys);
-
-
-			// 		}
-					
-			// 	}
-				
-			// 	if(path.empty()){
-			// 		IndexNode newRoot = new IndexNode();
-					
-			// 		System.out.print("****ROOT CASE*****");
-			// 		System.out.print(splittedNodes[0].keys);
-			// 		System.out.println(splittedNodes[1].keys);
-			// 		System.out.print("splitKey ");
-			// 		System.out.println(splitKey);
-			// 		newRoot.insertKey(splitKey,splittedNodes[0],splittedNodes[1]);
-			// 		this.root = newRoot;
-			// 	}
-
-			// 	// else{
-
-			// 	// 	IndexNode currentNode = (IndexNode) path.peek();
-			// 	// 	currentNode.insertKey(splitKey,splittedNodes[0],splittedNodes[1]);
-
-			// 	// }
-
-
+			// path is a stack containing the TreeNodes in the path to reach the possible node to add the new key. 
+			// Node on the top of the stack would be always DataNode. 
 			Stack<TreeNode> path = getPath(key);
 
-			
+			// Case 2.i - if adding new key in the possible node causes the overflow 
+			//(Number of keys is equal to order-1 i.e. capacityI of number keys is already reached.)
+
 			if (path.peek().keys.size() + 1 == BPlusTree.order) {
+I
+				int index = Collections.binarySearch(path.peek().keys, key); // get the index of th new key in the possible node.
 
-				int index = Collections.binarySearch(path.peek().keys, key);
-
+				// if key is already present: no need to split, just add the value in corresponding index at the datanode, by calling inserKey of datanode.
 				if (index >= 0) {
 					path.peek().insertKey(key, value);
 				}
 
-				
+				// if key is not there index calculated by Collections.binarySearch will be negative. 
+				// and since simply addding this key would cause an overflow in the node, we need to split the node. 
 				else {
 
-					TreeNode[] splittedNodes = null;
+					TreeNode[] splittedNodes = null; // array of two nodes fafter splitting the node, set to null initially
+					double splitKey = 0; // splitkey is the key which will be sent to the parent after splitting the node. 
 
-					
-
-					double splitKey = 0;
-
-					
+					// keep splitting the node and transmitting the spkitkey to the parent until either root has recached or adding the splitkey in the
+					// parent node doesnot cause overflow. 
 					while (!path.empty() && path.peek().keys.size() + 1 == BPlusTree.order) {
-
+						// In each iteration get the parent by poping the stack.
 						TreeNode parent = path.pop();
+						// if its datanode call insertKey of DataNode.
 						if (parent.isLeafNode) {
 							parent.insertKey(key, value);
 						} 
+						//otherwise call inserKey of insertKey of IndexNode.
 						else {
 							parent.insertKey(splitKey, splittedNodes[0], splittedNodes[1]);
 						}
@@ -122,7 +77,7 @@ public class BPlusTree{
 
 					}
 
-					
+					// if root is reached while climbing up the path, we need to expand the BPlus tree by creating new root. 
 					if (path.empty()) {
 
 						IndexNode newRoot = new IndexNode();
@@ -131,6 +86,7 @@ public class BPlusTree{
 
 					}
 					
+					// otherwise add the key in the parent node, since it will not overflow. 
 					else {
 						IndexNode node = (IndexNode) path.peek();
 						node.insertKey(splitKey, splittedNodes[0], splittedNodes[1]);
@@ -141,7 +97,8 @@ public class BPlusTree{
 
 			}
 
-			
+			// Casse 2.ii - If number of keys are not equal to maximum limit, insert the key in the possible leaf node
+			// which is at the top of the stack.
 			else {
 				path.peek().insertKey(key, value);
 			}
@@ -152,23 +109,20 @@ public class BPlusTree{
 	}
 
 	private Stack<TreeNode> getPath(double key){
-		// returns Stack of all the nodes along the path to the key
-		// First node of the stack is DataNode
+		// returns Stack of all the nodes along the path to the key from root of the tree.
+		// Top node of the stack is always DataNode(LeafNode)
 		Stack<TreeNode> path = new Stack<TreeNode>();
-		// System.out.print("Calling path traverse");
 		pathTraverse(root,key,path);
 		return path;
 	}
 
 	private void pathTraverse(TreeNode root, double key, Stack<TreeNode> path){
+		// helper function to het the stack of nodes in the path of the key from the root of the tree.
 		if(root.isLeafNode == true){
-			// System.out.print("Inside path traverse leaf");
 			path.push(root);
 			return;
 		}
-
 		else{
-
 			path.push(root);
 			int index = Collections.binarySearch(root.keys,key);
 			if(index < 0){
@@ -177,15 +131,6 @@ public class BPlusTree{
 			else{
 				index = index+1;
 			}
-			// System.out.print("Inside path traverse root");
-			// System.out.print(root.keys);
-			// for(TreeNode child : ((IndexNode)root).children){
-			// System.out.print(child.keys);
-			// }
-			// System.out.println("");
-			//System.out.print("Inside path traverse root");
-
-
 			TreeNode next = ((IndexNode)root).children.get(index);
 			pathTraverse(next,key,path);
 		}
@@ -196,13 +141,15 @@ public class BPlusTree{
 		if(root == null){
 			System.out.print("Null");
 		}
-
+		// get the path of the possible node of the key in the tree
 		TreeNode node = getPath(key).peek();
+		// get the index of the key in the ArrayList of the keys in the node. 
 		int index = Collections.binarySearch(node.getKeys(),key);
-
+		// if index is negative implies that key is not there the node.
 		if(index < 0){
 			System.out.println("Null");
 		}
+		//othervise get all the values associated with the key in the string builder and print it as a String.
 		else{
 			StringBuilder sb = new StringBuilder();
 			ArrayList<String> listValue = ((DataNode)node).getValues().get(index);
@@ -215,20 +162,26 @@ public class BPlusTree{
 	}
 
 	public void search(double key1, double key2){
+		// This method prints all the keys in the tree which lies in the range of key1 and key2. 
+		// It is assumed that key1 will be always smaller than key2.
+
 		if(root == null){
 			System.out.println("Null");
 		}
-
+		// get the path of the possible node of the smaller key in the range - key1 in the tree.
 		TreeNode node = getPath(key1).peek();
+		// get the index of the key in the ArrayList of the keys of the node. 
 		int index = Collections.binarySearch(node.getKeys(),key1);
+		// if key is not there in the node then take the index of key prent in the ArrayList higher than the key1.
 		index =  (index < 0) ?	-index -1 : index;
 		
-
+		// if index comes out to be equal to the number of the keys, i.e., their is no element at that index, then consider first element
+		// i.e., 0th key in the next node.
 		if(index == node.getNoKeys()){
 			node = ((DataNode)node).getNext();
 			index = 0;
 		}
-
+		// Iterate the Doubly linked list at the datanode till keys are less than or equal to the higher key in the range i.e., key2.
 		StringBuilder sb = new StringBuilder();
 		double temp = key1;
 
